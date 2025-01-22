@@ -9,6 +9,21 @@ stations = stations[["STAID", "STANAME                                 "]]
 def home():
     return render_template("home.html", data=stations.to_html())
 
+@app.route("/api/v1/<station>")
+def all_data(station):
+    filename = f"data_small/TG_STAID" + str(station).zfill(6) + ".txt"
+    df = pd.read_csv(filename, skiprows=20, parse_dates=["    DATE"])
+    result = df.to_dict(orient="records")
+    return result
+
+@app.route("/api/v1/yearly/<station>/<year>")
+def yearly(station, year):
+    filename = f"data_small/TG_STAID" + str(station).zfill(6) + ".txt"
+    df = pd.read_csv(filename, skiprows=20)
+    df["    DATE"] = df["    DATE"].astype(str)
+    result = df[df["    DATE"].str.startswith(str(year))].to_dict(orient="records")
+    return result
+
 @app.route("/api/v1/<station>/<date>")#the values that users add will be stored in the station and date arguments
 def about(station, date):
     filename = f"data_small/TG_STAID" + str(station).zfill(6) + ".txt"
