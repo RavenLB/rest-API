@@ -1,6 +1,9 @@
 from flask import Flask, render_template
+import pandas as pd
 
 app = Flask(__name__)
+df = pd.read_csv("dictionary.csv")
+
 
 @app.route("/")
 def home():
@@ -8,9 +11,10 @@ def home():
 
 @app.route("/api/v1/<word>/")
 def about(word):
-    definition =
-    return {"word": word, "definition": definition}
+    definition = df.loc[df["word"] == word]["definition"].squeeze()
+    result_dictionary = {"word":word, "definition":definition}
+    return result_dictionary
 
 if __name__ == "__main__":
-    app.run(debug=True)
-   # app.run(debug=True, port=5001)if you have multiple apps running at once you can specify the port here
+    app.run(debug=True, port=5001)
+
